@@ -39,6 +39,7 @@ device_tracker:
     hosts:
       homewindows: xxxxxxxx
 ```
+device_tracker 用于跟踪系统状态,自行设置自动化来实现wake_on_lan以后的图标打开与关闭状态  
 4. 通过HomeAssistant界面或终端发送调用指令,执行系统关机
 
 ## 开源信息
@@ -48,4 +49,6 @@ device_tracker:
 代码仓库地址:[https://github.com/zhf883680/shutdown](https://github.com/zhf883680/shutdown)
 
 欢迎提出建议、报告bug或贡献代码!
-
+## 代码介绍
+所有代码均由ChatGPT提供
+聊天内容[https://chat.openai.com/share/fa5df178-bf5e-4c33-a9b9-4eb653e6e12f](https://chat.openai.com/share/fa5df178-bf5e-4c33-a9b9-4eb653e6e12f)
