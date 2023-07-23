@@ -59,15 +59,18 @@ namespace ShutDown
             HttpListenerContext context = listener.EndGetContext(result);
             HttpListenerRequest request = context.Request;
 
-            // Process the request to check for the shutdown command
+            // Process the request to check for the shutdown command and delay parameter
             string responseString = "";
             if (request.HttpMethod == "POST" && request.Url.AbsolutePath == "/shutdown")
             {
                 // You can add additional checks here for authorization, if required.
 
+                // Get the shutdown delay time from the query parameter
+                int delaySeconds = GetShutdownDelay(request.Url.Query);
+
                 // Execute the system shutdown command
-                ShutdownSystem();
-                responseString = "System shutdown initiated.";
+                ShutdownSystem(delaySeconds);
+                responseString = $"System shutdown initiated with a delay of {delaySeconds} seconds.";
             }
             else
             {
@@ -84,10 +87,35 @@ namespace ShutDown
             listener.BeginGetContext(HandleHttpRequest, listener);
         }
 
-        private void ShutdownSystem()
+        private int GetShutdownDelay(string query)
+        {
+            string delayParameter = "delay=";
+            int defaultDelaySeconds = 60; // Default shutdown delay if the parameter is missing or invalid
+            int delaySeconds = defaultDelaySeconds;
+
+            int index = query.IndexOf(delayParameter);
+            if (index != -1)
+            {
+                int startIndex = index + delayParameter.Length;
+                int endIndex = query.IndexOf('&', startIndex);
+                if (endIndex == -1)
+                    endIndex = query.Length;
+
+                string delayValue = query.Substring(startIndex, endIndex - startIndex);
+                if (int.TryParse(delayValue, out int parsedDelay))
+                {
+                    delaySeconds = parsedDelay;
+                }
+            }
+
+            return delaySeconds;
+        }
+
+        private void ShutdownSystem(int delaySeconds)
         {
             // You may want to add a delay or show a warning message before shutting down.
-            System.Diagnostics.Process.Start("shutdown", "/s /f /t 0");
+            System.Diagnostics.Process.Start("shutdown", $"/s /f /t {delaySeconds}");
         }
+
     }
 }
